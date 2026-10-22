@@ -125,10 +125,10 @@ zip: $(ZIP)
 
 $(ZIP): main.tex refs.bib $(BUILD)/main.pdf $(addprefix $(ASSETS)/,$(PACKASSETS)) tools/make_zip.py
 	@rm -rf "$(STAGE)"
-	@mkdir -p "$(STAGE)/$(TOP)/$(ASSETS)"
+	@mkdir -p "$(STAGE)/$(TOP)"
 	@cp main.tex refs.bib "$(STAGE)/$(TOP)/"
 	@cp $(BUILD)/main.pdf "$(STAGE)/$(TOP)/"
-	@cp $(addprefix $(ASSETS)/,$(PACKASSETS)) "$(STAGE)/$(TOP)/$(ASSETS)/"
+	@cp $(addprefix $(ASSETS)/,$(PACKASSETS)) "$(STAGE)/$(TOP)/"
 	@$(PYTHON) tools/make_zip.py "$(STAGE)/$(TOP)" "$@"
 	@rm -rf "$(STAGE)"
 	@echo "ZIP  -> $@  (顶层目录 $(TOP)/，直接复制工作区文件)"
