@@ -1,0 +1,80 @@
+spawn ./cache/llama.cpp/build/bin/llama-cli --model cache/gemma-4-E2B-it-Q2_K.gguf -ngl 99 --temperature 0 -n 2048
+
+
+Loading model... |-\|/-\|/-\|/-\|/-\|/-\| 
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b11723-31288c9c6
+model      : cache/gemma-4-E2B-it-Q2_K.gguf
+ftype      : Q2_K - Medium
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+[1m[32m
+> I want to wash my car. The car wash is 50 meters away. Should I walk or drive?
+[0m[90m
+[Start thinking]
+
+Thinking Process:
+
+1.  **Analyze the Request:** The user is asking for advice on how to get to a car wash, specifically: "I want to wash my car. The car wash is 50 meters away. Should I walk or drive?"
+2.  **Identify the Core Problem:** The user is asking for a comparison between walking and driving.
+3.  **Analyze the Distance:** The distance mentioned is 50 meters.
+4.  **Evaluate the Options (Walk vs. Drive):**
+    *   **Distance:** 50 meters.
+    *   **Walking:** 50 meters.
+    *   **Driving:** 50 meters.
+    *   *Conclusion:* The distance is the same (50 meters).
+5.  **Determine the Answer based on the options:**
+    *   If the distance is 50 meters, walking and driving are equally valid options.
+    *   If the distance is 50 meters, walking and driving are equally valid options.
+6.  **Provide the comparison (Time/Effort):**
+    *   Walking 50 meters.
+    *   Driving 50 meters.
+    *   *Conclusion:* The distance is the same.
+
+7.  **Formulate the response:** Since the distance is the same (50 meters), the answer depends on the mode of transport (walking/driving).
+
+8.  **Final Answer Construction:** The distance is 50 meters. The distance is the same. (This is the most direct and accurate way to answer the question).
+
+*(Self-Correction/Refinement: The question is purely hypothetical. The answer is that the distance is the same, so the effort is equal.)*
+
+*   **Walking:** 50 meters.
+*   **Driving:** 50 meters.
+
+**Conclusion:** The distance is the same. (50 meters).
+
+*(Note: If the user intended to ask about the *effort* or *time*, the answer would be the same, but the physical distance is the key.)*
+
+**The answer is 50 meters.** (Meaning the distance is the same).
+
+**Recommendation:** Since the distance is the same, the answer is the same. (50 meters).
+
+*(This is the most direct and accurate way to answer the question.)*
+
+**The answer is 50 meters.** (Meaning the distance is the same).
+
+**Recommendation:** Since the distance is the same, the answer is the same. (50 meters).
+
+*(This is the most direct and accurate way to answer the question.)*[0m
+[35m
+[ Prompt: 259.5 t/s | Generation: 25.3 t/s ]
+[0m[1m[32m
+> ///exit
+[0m
+
+Exiting...

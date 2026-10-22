@@ -1,0 +1,15 @@
+{
+    // 中文排版必须用 xelatex（pdflatex 编中文直接失败）。
+    // 数组型设置是覆盖语义而非合并，这里显式给出唯一的 recipe，并让它排第一
+    // （recipe.default 默认值就是 "first"），从而不依赖别处 recipe 列表的内容。
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "xelatexmk",
+            "tools": ["xelatexmk"]
+        }
+    ],
+
+    // 产物与 main.sh 一致落入 <tex 所在目录>/build（%DIR% 随 main.tex 位置展开）；
+    // auxDir 默认等于 %OUTDIR%，中间文件一并进 build/；bibtex 由 latexmk 按需自动调用。
+    "latex-workshop.latex.outDir": "%DIR%/build"
+}

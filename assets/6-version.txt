@@ -1,0 +1,15 @@
+$ pwd
+/mnt/os
+$ rustc --version
+rustc 1.99.1 (58cf8f9c3 2026-10-13)
+$ cargo --version
+cargo 1.99.1 (5f94df478 2026-08-27)
+$ rustup --version
+rustup 1.29.1 (d95a37b6a 2026-08-13)
+info: This is the version for the rustup toolchain manager, not the rustc compiler.
+info: the currently active `rustc` version is `rustc 1.99.1 (58cf8f9c3 2026-10-13)`
+$ rustup target list --installed
+aarch64-unknown-linux-gnu
+riscv64gc-unknown-none-elf
+$ qemu-system-riscv64 --version | head -1
+QEMU emulator version 7.0.0
