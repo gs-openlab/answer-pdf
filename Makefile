@@ -140,5 +140,5 @@ clean: cleanroot
 # 默认情况下 xelatex 会在仓库根目录排版，会留下这些文件；build/ 才是现在的产物位置
 cleanroot:
 	@rm -f main.aux main.bbl main.blg main.fls main.fdb_latexmk main.log main.out \
-	       main.pdf main.synctex.gz main.xdv
+	       main.pdf main.synctex.gz main.toc main.lof main.lot main.xdv
 	@echo "移除仓库根目录的 LaTeX 中间文件"

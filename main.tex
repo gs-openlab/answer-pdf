@@ -1,8 +1,7 @@
-\documentclass[a4paper, 12pt]{article}
+\documentclass[a4paper, 12pt, linespread=1.35]{ctexart}   % 中文支持（ctexart 才能用 \ctexset 定制章节标题）
 \usepackage{amsmath, amssymb}
 \usepackage{xcolor}
-\usepackage[linespread=1.35]{ctex}   % 中文支持
-\usepackage[a4paper, margin=2.4cm, top=2.6cm, bottom=2.6cm]{geometry}
+\usepackage[a4paper, margin=2.4cm, top=2.6cm, bottom=2.6cm, headheight=15pt]{geometry}
 \usepackage{listings}     % 命令与日志原文
 \usepackage{enumitem}     % 列表间距
 \usepackage{graphicx}     % 插入终端截图
@@ -10,6 +9,10 @@
 \usepackage{etoolbox}
 \usepackage{needspace}   % 短代码块前留足空间，避免 listings 被切成只剩边框的碎片
 \usepackage{array}   % 表格列格式（>{\raggedright}）
+\usepackage{booktabs}     % 三线表：\toprule/\midrule/\bottomrule
+\usepackage{caption}      % 图表标题统一样式
+\usepackage{fancyhdr}     % 页眉页脚
+\usepackage{mdframed}     % 带侧边条的原话引用块
 
 % ctex 默认已有 2 字符首行缩进；但列表/代码环境之后的段落会被 LaTeX 的
 % \@doendpe 机制取消缩进（它用 \setbox\z@\lastbox 吃掉首行缩进盒子），
@@ -23,10 +26,14 @@
 \definecolor{lstframe}{gray}{0.72}
 \definecolor{lstnum}{gray}{0.55}
 \definecolor{todocolor}{rgb}{0.72,0.06,0.06}
+\definecolor{accent}{RGB}{31,78,121}   % 主题色：标题编号、页眉线与链接（深钢蓝）
 
 % 正文段距与断行宽容度：默认排得太密，且长路径会把行推出边界
 \setlength{\parskip}{0.4em}
 \setlength{\emergencystretch}{2em}
+
+% 图表标题：编号加粗着色、说明小一号，全文档统一
+\captionsetup{labelfont={bf,color=accent},font=small}
 
 \lstset{
   basicstyle=\ttfamily\small,
@@ -52,6 +59,23 @@
 % 二级列表：默认标记 -- 太抢眼，改空心圆点并收紧缩进/间距
 \setlist[itemize,2]{label=$\circ$, leftmargin=1.4em, itemsep=0.2em}
 
+% 页眉页脚：左置卷名、右置当前节名，页脚居中页码；细线用主题色
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{accent}纳新题作答}
+\fancyhead[R]{\small\color{accent}\rightmark}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrule}{{\color{accent}\hrule width\headwidth height 0.4pt}}
+
+% 章节标题：黑体 + 主题色（前两级），三级黑色黑体。必须用 \ctexset 而非 titlesec：
+% 下方 \pretocmd 的需求空间补丁绑定 \section 的当前定义，titlesec 重定义会让补丁
+% 静默失效；\ctexset 只改格式不动定义，补丁照常生效。
+\ctexset{
+  section={format={\Large\bfseries\heiti\color{accent}}},
+  subsection={format={\large\bfseries\heiti\color{accent}}},
+  subsubsection={format={\normalsize\bfseries\heiti}},
+}
+
 % 标题不落在页底：LaTeX 的 \@afterheading 只保证标题后有正文，但两个标题连排
 % （如 \subsection 紧跟 \subsubsection）时，整体仍可能留在页底、内容全到下页。
 % 给各级标题前置留白，让标题与其后内容一起换页。
@@ -64,6 +88,16 @@
 % 故不需要逐处估算块高。
 \newcommand{\keepwithnext}{\par\nobreak}
 
+% AI 原话引用块：左缘主题色竖条，与解读正文视觉分层（第 4 题）
+\newmdenv[
+  linewidth=2pt, linecolor=accent,
+  topline=false, bottomline=false, rightline=false,
+  leftmargin=1em, rightmargin=0em,
+  innerleftmargin=0.8em, innerrightmargin=0.5em,
+  innertopmargin=0.4em, innerbottommargin=0.4em,
+  skipabove=0.6em, skipbelow=0.6em,
+]{aibox}
+
 % \ifx\relax#1 这类「按首 token 判空」的写法对中文参数没有意义，而且会多开一层
 % 条件、把 \fi 提前配掉，最终以 "Incomplete \ifx" 结束整个文档。判空统一交给
 % \if\relax\detokenize{#1}\relax：空参只剩 \relax\relax 故为真，非空则为假。
@@ -74,7 +108,7 @@
     {\color{todocolor}\small[待填写：#1]}%
   \fi}
 
-\usepackage[hidelinks]{hyperref}   % 需在其他宏包之后加载
+\usepackage[colorlinks=true, linkcolor=accent, urlcolor=accent, citecolor=accent]{hyperref}   % 需在其他宏包之后加载；链接用主题色
 \usepackage{xurl}   % 在 hyperref 之后加载：\url 允许在任意字符处断行（长哈希/长路径）
 
 % 正文引用了 refs.bib 里的条目；\nocite{*} 保证库中其余条目也一并列出，
@@ -84,12 +118,28 @@
 % 参考文献样式：unsrt 按 .bib 内顺序编号，和正文引用顺序无关
 \bibliographystyle{unsrt}
 
-\title{纳新题作答}
-\author{包晨文}
-\date{\today}
-
 \begin{document}
-\maketitle
+
+% 首页标题块：默认 \maketitle 留白大且不含学号，改自排
+\thispagestyle{plain}
+\begingroup
+  \centering
+  {\LARGE\bfseries\heiti 纳新题作答\par}
+  \vspace{0.4em}
+  {\large\color{accent}OpenLab 2026 纳新笔试\par}
+  \vspace{1.4em}
+  {\color{accent}\rule{0.6\linewidth}{0.6pt}\par}
+  \vspace{0.8em}
+  {\large 包晨文\quad 202600540111\par}
+  \vspace{0.3em}
+  {\small\today\par}
+\endgroup
+\vspace{1.5em}
+
+% 目录：长卷导航；只收两级，控制篇幅
+\setcounter{tocdepth}{2}
+\tableofcontents
+\clearpage
 
 \section{提交说明}
 \subsection{远程仓库}
@@ -195,12 +245,12 @@ Since the distance is only 50 meters, both options are very practical, but here 
   \caption{同一模型（Q4\_0）在 CPU 与 Metal 下的推理速度}
   \label{tab:speed-cpu-metal}
   \begin{tabular}{@{}lcc@{}}
-    \hline
+    \toprule
     后端 & Prompt (t/s) & Generation (t/s) \\
-    \hline
+    \midrule
     CPU   & 86.5 & 21.4 \\
     Metal & 276.6 & 33.6 \\
-    \hline
+    \bottomrule
   \end{tabular}
 \end{table}
 
@@ -232,12 +282,12 @@ Since the distance is only 50 meters, both options are very practical, but here 
   \caption{同一 Metal 后端下 Q4\_0 与 Q2\_K 的推理速度}
   \label{tab:speed-q2k}
   \begin{tabular}{@{}lcc@{}}
-    \hline
+    \toprule
     模型 & Prompt (t/s) & Generation (t/s) \\
-    \hline
+    \midrule
     Q4\_0 & 276.6 & 33.6 \\
     Q2\_K & 259.5 & 25.3 \\
-    \hline
+    \bottomrule
   \end{tabular}
 \end{table}
 
@@ -288,21 +338,21 @@ Since the distance is only 50 meters, both options are very practical, but here 
 
 全部 10 轮提问都在同一会话，每轮同时投给 Kimi K3、DeepSeek V4.1 Flash、GLM 5.3，三版择一落地。下面是对话里关键的两三轮，与当时这么问的原因：
 
-\begin{quote}
+\begin{aibox}
 有什么桌宠框架能跨windows macOS linux平台
-\end{quote}
+\end{aibox}
 先框平台再谈技术栈：桌面自定义生态基本围绕 Windows，而我的终端机是 macOS，云桌面是 Windows，网关是 Linux，跨平台开发是常态，因此习惯性先排除平台特定方案。
 
 
-\begin{quote}
+\begin{aibox}
 我需要做一个能常驻桌面的小宠物：有界面、有交互（点击、拖拽、说话、走动），通过openai chat completion和tts实现语音播报、通过embedding向量检索实现本地记忆……其中，chat completion的底层模型上下文长度受限（约8k，无思考，端侧部署）；列出所有你觉得适合本项目的桌宠框架并解释
-\end{quote}
+\end{aibox}
 根据需求选择技术栈并参考/复用开源/已有代码是节省开发周期，高效推进项目的最初期工作。
 
 
-\begin{quote}
+\begin{aibox}
 我不打算借鉴+拼装，我要独立项目、尽可能mvp、不工程化……简化：只要加语音播报一个功能，调用本地模型、加本地记忆、加定时提醒的功能都简化掉……尽可能缩短工期（功能有即可，保留可扩展性而不实际调优过多功能）
-\end{quote}
+\end{aibox}
 发现成熟项目极多，可推断题设下的产品必然是玩具、没有长期维护价值，于是目标压缩到覆盖要求的最小实现。这句需求发了两遍：前一遍（10-19 21:24）需求描述是“用本地模型加语音播报、加本地记忆、加定时提醒”，三个模型都回了 4--6 个文件的蓝图；改成“只留语音播报”后才收窄到今天的大小。
 
 \subsection{项目仓库}
@@ -353,7 +403,7 @@ menu.addAction("报时", lambda: pet.say(f"现在{datetime.now().hour}点{dateti
 \end{itemize}
 
 \subsection{吐槽}
-这套原始方式的主要成本在于作为一道题目，我没法在成熟框架下添加我想要的功能，只能自己实现；而以完成题目而非学习底层原理为目标的限时编码不值得工程化地对待：桌宠题设下成熟项目极多，从零写出来的注定是玩具，给玩具补测试与抽象投入产出为负，所以我只停在覆盖全部要求的 MVP，留下功能可扩展性（\texttt{Pet.say}、\texttt{Speaker}、\texttt{Pet.\_tick}）而不接入。如果这道题目的目的实际是在复杂环境下在大量AI幻觉中定位问题的能力，我认为更合适的考查方式是给一个足够大而带暗病的项目并要求不用 agent 自主循环；当然也可能是我多模型回答手动比较的工作流本就降低了大模型幻觉对我的影响~\cite{bao2026reliability}。
+这道古法编程题的主要问题在于：作为一道题目，我没法在成熟框架下添加我想要的功能，只能自己实现；而以完成题目而非学习底层原理为目标的限时编码不值得工程化地对待：桌宠题设下成熟项目极多，从零写出来的注定是玩具，给玩具补测试与抽象投入产出为负，所以我只停在覆盖全部要求的 MVP，留下功能可扩展性（\texttt{Pet.say}、\texttt{Speaker}、\texttt{Pet.\_tick}）而不接入。如果这道题目的目的实际是在复杂环境下在大量AI幻觉中定位问题的能力，我认为更合适的考查方式是给一个足够大而带暗病的项目并要求不用 agent 自主循环；当然也可能是我多模型回答手动比较的工作流本就降低了大模型幻觉对我的影响~\cite{bao2026reliability}。
 
 \section{第 5 题：阅读理解}
 \label{sec:q5}
@@ -518,12 +568,13 @@ Row() {
   \caption{问了 AI 什么以及对不对}
   \label{tab:q6-ai}
   \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.16\linewidth}>{\raggedright\arraybackslash}p{0.24\linewidth}>{\raggedright\arraybackslash}p{0.26\linewidth}>{\raggedright\arraybackslash}p{0.26\linewidth}@{}}
-    \hline
+    \toprule
     遇到问题 & 问了什么 & AI 的建议 & 对不对 \\
-    \hline
+    \midrule
     \texttt{rustup: not found} & 把构建日志分别给 Kimi-K3、GLM-5.3、DeepSeek-V4.1-Flash 判断 & 只有 DeepSeek-V4.1-Flash 指出 \texttt{curl | sh} 的管道退出码被 \texttt{/bin/sh} 吞掉，其他认为是缓存层脏/环境变量未生效 & 根据常识，成熟的代码库通常不会留环境变量不生效这种可复现的错误，经验证确实是工具链安装未成功；再次观测到回答异质化现象并实证了人工推断的重要性~\cite{bao2026reliability}。 \\
+    \addlinespace
     更改 Hello,world 内容后中文输出乱码 & 要求修复中文乱码问题 & 第一版：改为按 UTF-8 字节输出；第二版：定位到 RustSBI 的 \texttt{a0 as u8 as char} & 第一版错误，第二版正确 \\
-    \hline
+    \bottomrule
   \end{tabular}
 \end{table}
 
@@ -571,9 +622,9 @@ Row() {
   \caption{第二页各符号做的事}
   \label{tab:page2}
   \begin{tabular}{@{}ll@{}}
-    \hline
+    \toprule
     符号 & 做的事 \\
-    \hline
+    \midrule
     \texttt{++++++++++} & 0 号单元累加到 10，作为循环计数器 \\
     \texttt{[} & 计数器非 0 时进入循环 \\
     \texttt{>++++++++} & 指针右移到 1 号单元，加 8 \\
@@ -583,7 +634,7 @@ Row() {
     \texttt{>-} & 指针移到 1 号单元，减 1 \\
     \texttt{.} & 输出 1 号单元的值 \\
     \texttt{>.} & 指针移到 2 号单元，输出它的值 \\
-    \hline
+    \bottomrule
   \end{tabular}
 \end{table}
 
@@ -617,25 +668,29 @@ Row() {
   \caption{不同机制下显存回退与磁盘分页能力}
   \label{tab:vram-fallback}
   \begin{tabular}{@{}p{0.22\textwidth}p{0.30\textwidth}p{0.38\textwidth}@{}}
-    \hline
+    \toprule
     机制 & 显存不足时能否转到系统内存 & 系统内存部分能否再到分页文件/交换区 \\
-    \hline
+    \midrule
     Windows WDDM（NVIDIA GeForce 的 CUDA Sysmem Fallback / 共享 GPU 内存）
       & 能。VidMm 将 allocation 驱逐到 system memory segment。
       & 有条件能。只有 non-resident/evicted allocation 的内容可以被 paged out to disk；resident 数据必须在物理内存中。 \\
+    \addlinespace
     Linux NVIDIA 独显
       & 不能。驱动不支持 CUDA Sysmem Fallback。
       & 不适用。 \\
+    \addlinespace
     Linux CUDA Unified Memory（full support）
       & 能 oversubscribe，页面在 GPU 与 CPU 之间迁移。
       & 普通 UM 页不能 swap 到磁盘，上限是系统 RAM；file-backed UM 是例外。 \\
+    \addlinespace
     Windows/WSL CUDA Unified Memory
       & 不能 oversubscribe（limited UM）。
       & 不适用。 \\
+    \addlinespace
     集显/UMA
       & 本来就是使用系统内存。
       & 普通系统页可被 OS 换出，但 GPU 访问期间会 resident。 \\
-    \hline
+    \bottomrule
   \end{tabular}
 \end{table}
 

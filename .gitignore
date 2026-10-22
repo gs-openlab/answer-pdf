@@ -16,3 +16,6 @@ build/
 *.pdf
 *.synctex.gz
 *.xdv
+*.toc
+*.lof
+*.lot
